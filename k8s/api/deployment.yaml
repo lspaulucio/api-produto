@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: api
 spec:
-  replicas: 10
+  replicas: 1
   selector:
     matchLabels:
       app: api
@@ -15,8 +15,31 @@ spec:
       containers:
         - name: api
           image: lspaulucio/kubedev-desafio2
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "100m"
+            limits:
+              memory: "64Mi"
+              cpu: "200m"
           ports:
             - containerPort: 8080
           env:
             - name: MONGODB_URI
               value: mongodb://mongouser:mongopwd@mongodb-service:27017/admin
+
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
