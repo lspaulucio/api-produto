@@ -19,6 +19,25 @@ spec:
       containers:
         - name: api
           image: lspaulucio/kubedev-desafio2
+          livenessProbe:
+            # exec:
+            #   command:
+            #     - ""
+            # tcpSocket:
+            httpGet:
+              path: /health
+              port: 8080
+              httpHeader:
+              scheme: http ou https
+            initialDelaySeconds: 0
+            periodSeconds: 1
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /read
+              port: 8080
           resources:
             requests:
               memory: "32Mi"
